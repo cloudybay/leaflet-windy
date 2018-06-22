@@ -1,0 +1,6 @@
+[submodule "gLayers.Leaflet"]
+	path = gLayers.Leaflet
+	url = https://github.com/cloudybay/gLayers.Leaflet.git
+[submodule "wind-js"]
+	path = wind-js
+	url = https://github.com/cloudybay/wind-js.git

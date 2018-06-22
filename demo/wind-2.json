@@ -1,0 +1,19 @@
+{
+  "header": {
+    "parameterUnit": "m.s-1",
+    "parameterNumber": 2,
+    "dx": 1.0,
+    "dy": 1.0,
+    "parameterNumberName": "eastward_wind",
+    "la1": 8,
+    "parameterCategory": 2,
+    "nx": 3,
+    "ny": 3,
+    "refTime": "2017-02-01 23:00:00",
+    "lo1": 120.0
+  },
+  "data": [
+    [25, 35, 15, 25, 35, 15, 25, 35, 15],
+    [10, -4, -9, 10, -4, -9, 10, -4, -9]
+  ]
+}

@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <title>LeafletWindy Demo</title>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<div id="map" style="width:600px;height:500px;background:black"></div>
+
+<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.css" />
+<script src="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.js"></script>
+
+<script src="../wind-js/mdmv-worker.js"></script>
+<script src="../wind-js/windy.js"></script>
+<script src="../gLayers.Leaflet/L.CanvasLayer.js"></script>
+<script src="../windy-layer-worker.js"></script>
+<script src="../L.WindyLayer.js"></script>
+
+<script>
+var map = L.map('map', {
+});
+map.setView([7.5, 120.5], 9);
+
+var colorScale = [
+    "rgb(255, 255, 255)",
+    "rgb(255, 255, 0)",
+    "rgb(255, 0, 0)",
+    "rgb(255, 0, 255)",
+];
+colorScale.indexFor = function(v) {
+    if (v < 17) {
+        return 0
+    }
+    if (v < 25) {
+        return 1
+    }
+    if (v < 56) {
+        return 2
+    }
+    return 3
+};
+
+var windyLayer = L.windyLayer({
+        colorScale: colorScale
+    });
+map.addLayer(windyLayer);
+
+
+// WindyDataProxy.getData("wind-2.json", function(data) {
+//     windyLayer.setData(data)
+// })
+
+
+// var windy_worker = new Worker("../src/js/windy-layer-worker.js");
+// windy_worker.data_pool = []
+// windy_worker.onmessage = function (e) {
+//     if (e.data.fetched_data) {
+//         windy_worker.data_pool.push(e.data.fetched_data)
+//         if (windy_worker.data_pool.length > 1) {
+//             windyLayer.transformData(windy_worker.data_pool)
+//         }
+//         else {
+//             windyLayer.setData(e.data.fetched_data)
+//         }
+//     }
+//     else if (e.data.interpolated_data) {
+//     }
+// }
+
+// windy_worker.postMessage({
+//     data_uri: "/dev/wind-2.json"
+// })
+
+// windy_worker.postMessage({
+//     data_uri: "/dev/wind-3.json"
+// })
+
+
+var windy_proxy = new WindyDataProxy(windyLayer)//, "../src/js/windy-layer-worker.js")
+windy_proxy.goto_dtg("/demo/wind-3.json")
+
+
+setTimeout(function() {
+    windy_proxy.goto_dtg("/demo/wind-2.json")
+}, 200)
+
+</script>
+
+</body>
+</html>
