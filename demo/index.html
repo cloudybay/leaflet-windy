@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div id="map" style="width:600px;height:500px;background:black"></div>
+<div id="map" style="width:800px;height:700px;background:black"></div>
 
 <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.css" />
 <script src="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.js"></script>
@@ -20,25 +20,70 @@
 <script>
 var map = L.map('map', {
 });
-map.setView([7.5, 120.5], 9);
+map.setView([7.5, 120.5], 1);
 
 var colorScale = [
     "rgb(255, 255, 255)",
-    "rgb(255, 255, 0)",
-    "rgb(255, 0, 0)",
-    "rgb(255, 0, 255)",
+    "rgb(255, 255, 170)",
+    "rgb(255, 255, 85)",
+    "rgb(255, 255, 0)", // 3
+    "rgb(255, 224, 0)",
+    "rgb(255, 193, 0)",
+    "rgb(255, 159, 0)",
+    "rgb(255, 127, 0)", // 7
+    "rgb(255, 96, 0)",
+    "rgb(255, 64, 0)",
+    "rgb(255, 32, 0)",
+    "rgb(255, 0, 0)", // 11
+    "rgb(170, 0, 170)",
+    "rgb(85, 0, 170)",
 ];
 colorScale.indexFor = function(v) {
-    if (v < 17) {
+    if (v < 10.8) {
         return 0
     }
-    if (v < 25) {
+    // TD~
+    if (v < 13.9) {
         return 1
     }
-    if (v < 56) {
+    if (v < 17.2) {
         return 2
     }
-    return 3
+    // 輕度颱風~
+    if (v < 20.8) {
+        return 3
+    }
+    if (v < 24.5) {
+        return 4
+    }
+    if (v < 28.5) {
+        return 5
+    }
+    if (v < 32.7) {
+        return 6
+    }
+    // 中度颱風~
+    if (v < 37.0) {
+        return 7
+    }
+    if (v < 41.5) {
+        return 8
+    }
+    if (v <46.2) {
+        return 9
+    }
+    if (v < 51.0) {
+        return 10
+    }
+    // 強度颱風~
+    if (v < 56.1) {
+        return 11
+    }
+    if (v < 61.2) {
+        return 12
+    }
+    // 超過17級風~
+    return 13
 };
 
 var windyLayer = L.windyLayer({
@@ -77,13 +122,19 @@ map.addLayer(windyLayer);
 // })
 
 
-var windy_proxy = new WindyDataProxy(windyLayer)//, "../src/js/windy-layer-worker.js")
-windy_proxy.goto_dtg("/demo/wind-3.json")
+var windy_proxy = new WindyDataProxy(windyLayer, "../windy-layer-worker.js")
+windy_proxy.goto_dtg("/demo/noaa_2018062300_000.grib2.json")
 
 
 setTimeout(function() {
-    windy_proxy.goto_dtg("/demo/wind-2.json")
-}, 200)
+   windy_proxy.transform_dtg("/demo/noaa_2018062300_003.grib2.json")
+}, 3000);
+setTimeout(function() {
+   windy_proxy.transform_dtg("/demo/noaa_2018062300_006.grib2.json")
+}, 6000);
+setTimeout(function() {
+   windy_proxy.transform_dtg("/demo/noaa_2018062300_024.grib2.json")
+}, 9000);
 
 </script>
 

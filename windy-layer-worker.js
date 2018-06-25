@@ -3,12 +3,13 @@ class WindyDataProxy {
 
     constructor(wind_layer, worker_uri) {
         this.wind_layer = wind_layer
+
         if (worker_uri) {
             var self = this
             self.worker = new Worker(worker_uri)
             self.worker.onmessage = function (e) {
                 if (e.data.fetched_data) {
-                    self.assignData(e.data.fetched_data)
+                    self.assignData(e.data.fetched_data, e.data.transform)
                 }
                 else if (e.data.transform_options) {
                     self.wind_layer.transformData(e.data.transform_options)
@@ -17,9 +18,9 @@ class WindyDataProxy {
         }
     }
 
-    assignData(data) {
+    assignData(data, run_transform) {
         var self = this
-        if (self.wind_layer.is_active()) {
+        if (run_transform && self.wind_layer.is_active()) {
             let from_data = self.wind_layer.data()
             if (from_data) {
                 if (self.worker) {
@@ -35,15 +36,25 @@ class WindyDataProxy {
                 return self;
             }
         }
+
         self.wind_layer.setData(data)
         return self
     }
 
     goto_dtg(dtg) {
+        this._to_dtg(dtg, false)
+    }
+
+    transform_dtg(dtg) {
+        this._to_dtg(dtg, true)
+    }
+
+    _to_dtg(dtg, run_transform) {
         var self = this
         if (self.worker) {
             self.worker.postMessage({
-                data_uri: dtg
+                data_uri: dtg,
+                transform: run_transform
             })
         }
         else {
@@ -53,16 +64,35 @@ class WindyDataProxy {
         }
     }
 
+    static strptime(date_str) {
+        var _reg = new RegExp("(\\d{4})(\\d{2})(\\d{2})(\\d{2})(\\d{2})"),
+            _rs = date_str.match(_reg),
+            new_dt = new Date();
+
+        new_dt.setFullYear(_rs[1])
+        new_dt.setMonth(_rs[2])
+        new_dt.setDate(_rs[3])
+        new_dt.setHours(_rs[4])
+        new_dt.setMinutes(_rs[5])
+        new_dt.setSeconds(0)
+        new_dt.setMilliseconds(0)
+        return new_dt
+    }
+
     static interpolateData(from_data, to_data) {
         // return { data:[], speed: int }
-        var from_time = 0, to_time = 4,
+        var from_time = 0, to_time = 2,
             inter_datas = [], interp = 0
 
-        if (from_data.refTime && to_data.refTime) {
-            if (from_data.refTime == to_data.refTime) {
+        if (from_data.header.refTime && to_data.header.refTime) {
+            if (from_data.header.refTime == to_data.header.refTime) {
                 interp = 0
             }
             else {
+                // interpolate into one hour
+                let t_from = WindyDataProxy.strptime(from_data.header.refTime),
+                    t_to = WindyDataProxy.strptime(to_data.header.refTime),
+                    to_time = parseInt((t_to - t_from)/(60*60*1000));
                 interp = Math.abs(to_time - from_time)
             }
         }
@@ -116,10 +146,9 @@ class WindyDataProxy {
             .then(data => {
                 callback(data);
             })
-            .catch(function(error) {
+            .catch(error => {
                 console.log(`Error: ${error.message}`);
-            }
-        )
+            })
     }
 }
 
@@ -127,7 +156,7 @@ class WindyDataProxy {
 onmessage = function(e) {
     if (e.data.data_uri) {
         var callback = function(data) {
-            postMessage({ fetched_data: data })
+            postMessage({ fetched_data: data, transform: e.data.transform })
         }
         WindyDataProxy.fetchData(e.data.data_uri, callback)
     }
