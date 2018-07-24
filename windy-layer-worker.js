@@ -3,16 +3,21 @@ class WindyDataProxy {
 
     constructor(wind_layer, worker_uri) {
         this.wind_layer = wind_layer
+        this.curr_dtg = null
 
         if (worker_uri) {
             var self = this
             self.worker = new Worker(worker_uri)
             self.worker.onmessage = function (e) {
                 if (e.data.fetched_data) {
-                    self.assignData(e.data.fetched_data, e.data.transform)
+                    if (e.data.dtg == self.curr_dtg) {
+                        self.assignData(e.data.fetched_data, e.data.transform)
+                    }
                 }
                 else if (e.data.transform_options) {
-                    self.wind_layer.transformData(e.data.transform_options)
+                    if (self.curr_dtg.indexOf(e.data.transform_options.to_dtg) >= 0) {
+                        self.wind_layer.transformData(e.data.transform_options)
+                    }
                 }
             }
         }
@@ -46,12 +51,15 @@ class WindyDataProxy {
     }
 
     transform_dtg(dtg) {
+        // transform has bug
+        // if trans to fast, they might showing wrong dtg
         this._to_dtg(dtg, true)
     }
 
     _to_dtg(dtg, run_transform) {
         var self = this
         self.curr_dtg = dtg
+        console.log(self.curr_dtg)
         if (dtg) {
             if (self.worker) {
                 self.worker.postMessage({
@@ -89,7 +97,7 @@ class WindyDataProxy {
         // return { data:[], speed: int }
         var from_time = 0, to_time = 2,
             inter_datas = [], interp = 0,
-            into_hours = 3;
+            into_hours = 3, to_dtg = to_data.header.refTime;
 
         if (from_data.header.refTime && to_data.header.refTime) {
             if (from_data.header.refTime == to_data.header.refTime) {
@@ -137,7 +145,7 @@ class WindyDataProxy {
         }
         inter_datas.push({header: to_data.header, data: to_data.data})
 
-        return { data: inter_datas, speed: (into_hours / interp)}
+        return { data: inter_datas, speed: (into_hours / interp), to_dtg: to_dtg}
     }
 
     static fetchData(uri, callback) {
@@ -163,7 +171,7 @@ class WindyDataProxy {
 onmessage = function(e) {
     if (e.data.data_uri) {
         var callback = function(data) {
-            postMessage({ fetched_data: data, transform: e.data.transform })
+            postMessage({ fetched_data: data, transform: e.data.transform, dtg: e.data.data_uri })
         }
         WindyDataProxy.fetchData(e.data.data_uri, callback)
     }
