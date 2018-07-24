@@ -1,3 +1,4 @@
+
 L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
 
     options: {

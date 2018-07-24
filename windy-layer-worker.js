@@ -51,16 +51,22 @@ class WindyDataProxy {
 
     _to_dtg(dtg, run_transform) {
         var self = this
-        if (self.worker) {
-            self.worker.postMessage({
-                data_uri: dtg,
-                transform: run_transform
-            })
+        self.curr_dtg = dtg
+        if (dtg) {
+            if (self.worker) {
+                self.worker.postMessage({
+                    data_uri: dtg,
+                    transform: run_transform
+                })
+            }
+            else {
+                WindyDataProxy.fetchData(dtg, function(data) {
+                    self.assignData(data)
+                })
+            }
         }
         else {
-            WindyDataProxy.fetchData(dtg, function(data) {
-                self.assignData(data)
-            })
+            self.assignData(null)
         }
     }
 
@@ -82,17 +88,18 @@ class WindyDataProxy {
     static interpolateData(from_data, to_data) {
         // return { data:[], speed: int }
         var from_time = 0, to_time = 2,
-            inter_datas = [], interp = 0
+            inter_datas = [], interp = 0,
+            into_hours = 3;
 
         if (from_data.header.refTime && to_data.header.refTime) {
             if (from_data.header.refTime == to_data.header.refTime) {
                 interp = 0
             }
             else {
-                // interpolate into one hour
+                // interpolate into {into_hours} hour
                 let t_from = WindyDataProxy.strptime(from_data.header.refTime),
                     t_to = WindyDataProxy.strptime(to_data.header.refTime),
-                    to_time = parseInt((t_to - t_from)/(60*60*1000));
+                    to_time = parseInt((t_to - t_from)/(60*60*1000 * into_hours));
                 interp = Math.abs(to_time - from_time)
             }
         }
@@ -130,7 +137,7 @@ class WindyDataProxy {
         }
         inter_datas.push({header: to_data.header, data: to_data.data})
 
-        return { data: inter_datas, speed: (1.0 / interp)}
+        return { data: inter_datas, speed: (into_hours / interp)}
     }
 
     static fetchData(uri, callback) {
