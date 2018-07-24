@@ -59,7 +59,6 @@ class WindyDataProxy {
     _to_dtg(dtg, run_transform) {
         var self = this
         self.curr_dtg = dtg
-        console.log(self.curr_dtg)
         if (dtg) {
             if (self.worker) {
                 self.worker.postMessage({
