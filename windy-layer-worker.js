@@ -161,6 +161,7 @@ class WindyDataProxy {
                 callback(data);
             })
             .catch(error => {
+                callback({});
                 console.log(`Error: ${error.message}`);
             })
     }
