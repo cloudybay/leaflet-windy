@@ -17,7 +17,7 @@ L.DomUtil.setTransform = L.DomUtil.setTransform || function (el, offset, scale) 
 };
 
 // -- support for both  0.0.7 and 1.0.0 rc2 leaflet
-L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
+L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
     // -- initialized is called on prototype
     initialize: function (options) {
         this._map    = null;
@@ -200,6 +200,6 @@ L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     }
 });
 
-L.canvasLayer = function () {
-    return new L.CanvasLayer();
+L.windCanvas = function () {
+    return new L.WindCanvas();
 };

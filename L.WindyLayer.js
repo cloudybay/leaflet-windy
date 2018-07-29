@@ -13,7 +13,7 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     onAdd: function(map) {
-        this._canvasLayer = L.canvasLayer().delegate(this)
+        this._canvasLayer = L.windCanvas().delegate(this)
         this._canvasLayer.addTo(map)
         this._map = map
     },
