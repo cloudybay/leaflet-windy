@@ -62,7 +62,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._canvas.width = resizeEvent.newSize.x;
         this._canvas.height = resizeEvent.newSize.y;
 
-        go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
+        // go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
         L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
     },
     //-------------------------------------------------------------
@@ -81,15 +81,18 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         L.DomUtil.setPosition(this._canvas, topLeft);
         this.drawLayer();
 
-        go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
+        // go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
         L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
+    },
+    _onLayerDidZoom: function() {
+        //pass
     },
     //-------------------------------------------------------------
     getEvents: function () {
         var events = {
             resize: this._onLayerDidResize,
             moveend: this._onLayerDidMove,
-            zoomend: this._onLayerDidMove
+            zoomend: this._onLayerDidZoom
         };
         if (this._map.options.zoomAnimation && L.Browser.any3d) {
             events.zoomanim =  this._animateZoom;
