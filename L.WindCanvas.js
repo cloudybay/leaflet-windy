@@ -122,6 +122,10 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         map._panes.overlayPane.appendChild(this._canvas1);
         map._panes.overlayPane.appendChild(this._canvas2);
 
+        var topLeft = this._map.containerPointToLayerPoint([0, 0]);
+        L.DomUtil.setPosition(this._canvas1, topLeft);
+        L.DomUtil.setPosition(this._canvas2, topLeft);
+
         map.on(this.getEvents(),this);
 
         var del = this._delegate || this;
