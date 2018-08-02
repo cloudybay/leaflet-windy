@@ -89,7 +89,7 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
         }
 
         if (this.options.data) {
-            this._windy.setData(this.options.data);
+            this._windy.setData(this.options.data, params.no_worker);
         }
         this._windy.start();
         return this;

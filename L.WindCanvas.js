@@ -46,8 +46,8 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
 
     //-------------------------------------------------------------
     _onLayerDidResize: function (resizeEvent) {
-        var go_hide_canvas = null
         if (resizeEvent) {
+            var go_hide_canvas = null
             if (this._canvas == this._canvas2) {
                 this._canvas = this._canvas1;
                 L.DomUtil.removeClass(this._canvas1, 'leaflet-layer-hide');
@@ -58,12 +58,14 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
                 L.DomUtil.removeClass(this._canvas2, 'leaflet-layer-hide');
                 go_hide_canvas = this._canvas1;
             }
-        }
-        this._canvas.width = resizeEvent.newSize.x;
-        this._canvas.height = resizeEvent.newSize.y;
+            this._canvas1.width = resizeEvent.newSize.x;
+            this._canvas1.height = resizeEvent.newSize.y;
+            this._canvas2.width = resizeEvent.newSize.x;
+            this._canvas2.height = resizeEvent.newSize.y;
 
-        // go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
-        L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
+            // go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
+            L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
+        }
     },
     //-------------------------------------------------------------
     _onLayerDidMove: function () {
@@ -81,7 +83,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         }
         var topLeft = this._map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this._canvas, topLeft);
-        this.drawLayer();
+        this.drawLayer(true);
 
         L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
     },
@@ -164,7 +166,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     //------------------------------------------------------------------------------
-    drawLayer: function () {
+    drawLayer: function (no_worker) {
         // -- todo make the viewInfo properties  flat objects.
         var size   = this._map.getSize();
         var bounds = this._map.getBounds();
@@ -181,7 +183,8 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             size: size,
             zoom: zoom,
             center : center,
-            corner : corner
+            corner : corner,
+            no_worker: no_worker
         });
         this._frame = null;
     },
