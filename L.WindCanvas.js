@@ -69,11 +69,13 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
     _onLayerDidMove: function () {
         if (this._canvas == this._canvas2) {
             this._canvas = this._canvas1;
+            this._canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
             L.DomUtil.removeClass(this._canvas1, 'leaflet-layer-hide');
             go_hide_canvas = this._canvas2;
         }
         else {
             this._canvas = this._canvas2;
+            this._canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
             L.DomUtil.removeClass(this._canvas2, 'leaflet-layer-hide');
             go_hide_canvas = this._canvas1;
         }
@@ -81,7 +83,6 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         L.DomUtil.setPosition(this._canvas, topLeft);
         this.drawLayer();
 
-        // go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
         L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
     },
     _onLayerDidZoom: function() {

@@ -76,22 +76,27 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     onDrawLayer: function(params) {
-        if (this._windy) {
-            this._windy = this._windy.release()
+        let [bounds, width, height, extent] = this._buildParams(params.size, params.bounds);
+        if (!this._windy) {
+            this._windy = new Windy(
+                params.canvas,
+                bounds, width, height, extent,
+                this.options
+            );
         }
-
-        this._windy = this._createWind(params.canvas, params.size, params.bounds)
+        else {
+            this._windy.setCanvas(params.canvas, bounds, width, height, extent);
+        }
 
         if (this.options.data) {
             this._windy.setData(this.options.data);
         }
-        this._windy.start()
-        return this
+        this._windy.start();
+        return this;
     },
 
-    _createWind: function(canvas, size, bounds) {
-        return new Windy(
-            canvas,
+    _buildParams: function(size, bounds) {
+        return[
             [
                 [0, 0],
                 [size.x, size.y]
@@ -101,22 +106,22 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
             [
                 [bounds._southWest.lng, bounds._southWest.lat],
                 [bounds._northEast.lng, bounds._northEast.lat]
-            ],
-            this.options
-        )
+            ]
+        ];
     },
 
     _destroyWind: function() {
         if (this._transform_animate) {
-            cancelAnimationFrame(this._transform_animate)
-            this._transform_animate = null
+            cancelAnimationFrame(this._transform_animate);
+            this._transform_animate = null;
         }
         if (this._windy) {
-            this._windy = this._windy.release()
+            this._windy.release();
+            this._windy = null;
         }
-        this._canvasLayer.clear()
-        this._map.removeLayer(this._canvasLayer)
-        this._canvasLayer = null
+        this._canvasLayer.clear();
+        this._map.removeLayer(this._canvasLayer);
+        this._canvasLayer = null;
     }
 });
 
