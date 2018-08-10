@@ -18,6 +18,11 @@ L.DomUtil.setTransform = L.DomUtil.setTransform || function (el, offset, scale) 
 
 // -- support for both  0.0.7 and 1.0.0 rc2 leaflet
 L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
+
+    options: {
+        pane: 'overlayPane'
+    },
+
     // -- initialized is called on prototype
     initialize: function (options) {
         this._map    = null;
@@ -109,6 +114,21 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._canvas1 = L.DomUtil.create('canvas', 'leaflet-layer leaflet-layer-fade');
         this._canvas2 = L.DomUtil.create('canvas', 'leaflet-layer leaflet-layer-fade');
 
+        if (this.options) {
+            if (typeof this.options.opacity !== 'undefined') {
+                this._canvas1.style.opacity = this.options.opacity;
+                this._canvas2.style.opacity = this.options.opacity;
+            }
+            if (typeof this.options.zIndex !== 'undefined') {
+                this._canvas1.style.zIndex = this.options.zIndex;
+                this._canvas2.style.zIndex = this.options.zIndex;
+            }
+            if (typeof this.options.className !== 'undefined') {
+                L.DomUtil.addClass(this._canvas1, this.options.className);
+                L.DomUtil.addClass(this._canvas2, this.options.className);
+            }
+        }
+
         L.DomUtil.addClass(this._canvas2, 'leaflet-layer-hide');
         this._canvas = this._canvas1;
 
@@ -122,8 +142,8 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         L.DomUtil.addClass(this._canvas1, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
         L.DomUtil.addClass(this._canvas2, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
 
-        map._panes.overlayPane.appendChild(this._canvas1);
-        map._panes.overlayPane.appendChild(this._canvas2);
+        map._panes[this.options.pane].appendChild(this._canvas1);
+        map._panes[this.options.pane].appendChild(this._canvas2);
 
         var topLeft = this._map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this._canvas1, topLeft);
@@ -211,6 +231,6 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
     }
 });
 
-L.windCanvas = function () {
-    return new L.WindCanvas();
+L.windCanvas = function (options) {
+    return new L.WindCanvas(options);
 };

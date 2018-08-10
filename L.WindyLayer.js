@@ -13,7 +13,20 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     onAdd: function(map) {
-        this._canvasLayer = L.windCanvas().delegate(this)
+        let options = {};
+        if (typeof this.options.opacity !== 'undefined') {
+            options.opacity = this.options.opacity;
+        }
+        if (typeof this.options.pane !== 'undefined') {
+            options.pane = this.options.pane;
+        }
+        if (typeof this.options.zIndex !== 'undefined') {
+            options.zIndex = this.options.zIndex;
+        }
+        if (typeof this.options.className !== 'undefined') {
+            options.className = this.options.className;
+        }
+        this._canvasLayer = L.windCanvas(options).delegate(this)
         this._canvasLayer.addTo(map)
         this._map = map
     },
