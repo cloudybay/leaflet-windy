@@ -20,6 +20,7 @@ L.DomUtil.setTransform = L.DomUtil.setTransform || function (el, offset, scale) 
 L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
 
     options: {
+        opacity: 1,
         pane: 'overlayPane'
     },
 
@@ -30,9 +31,6 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._frame  = null;
         this._delegate = null;
         L.setOptions(this, options);
-        if (typeof this.options.opacity === 'undefined') {
-            this.options.opacity = null;
-        }
     },
 
     delegate :function(del){
@@ -58,13 +56,11 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             var go_hide_canvas = null
             if (this._canvas == this._canvas2) {
                 this._canvas = this._canvas1;
-                L.DomUtil.removeClass(this._canvas1, 'leaflet-layer-hide');
                 this._canvas1.style.opacity = this.options.opacity;
                 go_hide_canvas = this._canvas2;
             }
             else {
                 this._canvas = this._canvas2;
-                L.DomUtil.removeClass(this._canvas2, 'leaflet-layer-hide');
                 this._canvas2.style.opacity = this.options.opacity;
                 go_hide_canvas = this._canvas1;
             }
@@ -73,9 +69,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             this._canvas2.width = resizeEvent.newSize.x;
             this._canvas2.height = resizeEvent.newSize.y;
 
-            // go_hide_canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
-            L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
-            go_hide_canvas.style.opacity = null;
+            go_hide_canvas.style.opacity = 0;
         }
     },
     //-------------------------------------------------------------
@@ -84,14 +78,12 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         if (this._canvas == this._canvas2) {
             this._canvas = this._canvas1;
             this._canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
-            L.DomUtil.removeClass(this._canvas1, 'leaflet-layer-hide');
             this._canvas1.style.opacity = this.options.opacity;
             go_hide_canvas = this._canvas2;
         }
         else {
             this._canvas = this._canvas2;
             this._canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
-            L.DomUtil.removeClass(this._canvas2, 'leaflet-layer-hide');
             this._canvas2.style.opacity = this.options.opacity;
             go_hide_canvas = this._canvas1;
         }
@@ -99,8 +91,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         L.DomUtil.setPosition(this._canvas, topLeft);
         this.drawLayer(true);
 
-        L.DomUtil.addClass(go_hide_canvas, 'leaflet-layer-hide');
-        go_hide_canvas.style.opacity = null;
+        go_hide_canvas.style.opacity = 0;
     },
     _onLayerDidZoom: function() {
         //pass
@@ -124,22 +115,17 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._canvas1 = L.DomUtil.create('canvas', 'leaflet-layer leaflet-layer-fade');
         this._canvas2 = L.DomUtil.create('canvas', 'leaflet-layer leaflet-layer-fade');
 
-        if (this.options) {
-            if (this.options.opacity !== null) {
-                this._canvas1.style.opacity = this.options.opacity;
-                this._canvas2.style.opacity = null;
-            }
-            if (typeof this.options.zIndex !== 'undefined') {
-                this._canvas1.style.zIndex = this.options.zIndex;
-                this._canvas2.style.zIndex = this.options.zIndex;
-            }
-            if (typeof this.options.className !== 'undefined') {
-                L.DomUtil.addClass(this._canvas1, this.options.className);
-                L.DomUtil.addClass(this._canvas2, this.options.className);
-            }
+        if (typeof this.options.zIndex !== 'undefined') {
+            this._canvas1.style.zIndex = this.options.zIndex;
+            this._canvas2.style.zIndex = this.options.zIndex;
+        }
+        if (typeof this.options.className !== 'undefined') {
+            L.DomUtil.addClass(this._canvas1, this.options.className);
+            L.DomUtil.addClass(this._canvas2, this.options.className);
         }
 
-        L.DomUtil.addClass(this._canvas2, 'leaflet-layer-hide');
+        this._canvas1.style.opacity = this.options.opacity;
+        this._canvas2.style.opacity = 0;
         this._canvas = this._canvas1;
 
         var size = this._map.getSize();
