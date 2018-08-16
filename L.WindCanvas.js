@@ -56,11 +56,13 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             var go_hide_canvas = null
             if (this._canvas == this._canvas2) {
                 this._canvas = this._canvas1;
+                L.DomUtil.removeClass(this._canvas1, "leaflet-layer-fade");
                 this._canvas1.style.opacity = this.options.opacity;
                 go_hide_canvas = this._canvas2;
             }
             else {
                 this._canvas = this._canvas2;
+                L.DomUtil.removeClass(this._canvas2, "leaflet-layer-fade");
                 this._canvas2.style.opacity = this.options.opacity;
                 go_hide_canvas = this._canvas1;
             }
@@ -69,6 +71,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             this._canvas2.width = resizeEvent.newSize.x;
             this._canvas2.height = resizeEvent.newSize.y;
 
+            L.DomUtil.addClass(go_hide_canvas, "leaflet-layer-fade");
             go_hide_canvas.style.opacity = 0;
         }
     },
@@ -78,12 +81,14 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         if (this._canvas == this._canvas2) {
             this._canvas = this._canvas1;
             this._canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
+            L.DomUtil.removeClass(this._canvas1, "leaflet-layer-fade");
             this._canvas1.style.opacity = this.options.opacity;
             go_hide_canvas = this._canvas2;
         }
         else {
             this._canvas = this._canvas2;
             this._canvas.getContext('2d').clearRect(0, 0, 3000, 3000);
+            L.DomUtil.removeClass(this._canvas2, "leaflet-layer-fade");
             this._canvas2.style.opacity = this.options.opacity;
             go_hide_canvas = this._canvas1;
         }
@@ -91,6 +96,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         L.DomUtil.setPosition(this._canvas, topLeft);
         this.drawLayer(true);
 
+        L.DomUtil.addClass(go_hide_canvas, "leaflet-layer-fade");
         go_hide_canvas.style.opacity = 0;
     },
     _onLayerDidZoom: function() {
@@ -112,8 +118,8 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
     //-------------------------------------------------------------
     onAdd: function (map) {
         this._map = map;
-        this._canvas1 = L.DomUtil.create('canvas', 'leaflet-layer leaflet-layer-fade');
-        this._canvas2 = L.DomUtil.create('canvas', 'leaflet-layer leaflet-layer-fade');
+        this._canvas1 = L.DomUtil.create('canvas', 'leaflet-layer');
+        this._canvas2 = L.DomUtil.create('canvas', 'leaflet-layer');
 
         if (typeof this.options.zIndex !== 'undefined') {
             this._canvas1.style.zIndex = this.options.zIndex;

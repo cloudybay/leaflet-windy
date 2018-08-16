@@ -103,8 +103,8 @@ colorScale.indexFor = function(v) {
 
 var windyLayer = L.windyLayer({
         colorScale: colorScale,
-        worker_uri: "../wind-js/mdmv-worker.js",
-        opacity: 0.2,
+        // worker_uri: "../wind-js/mdmv-worker.js",
+        opacity: 0.6,
         pane: 'shadowPane'
     });
 map.addLayer(windyLayer);
@@ -186,13 +186,13 @@ function toggle() {
     console.log("checked", checked);
     if (checked) {
         // map.removeLayer(windyLayer)
-        // document.getElementById("map").style.width = "400px";
-        windy_proxy.goto_dtg("/demo/noaa_201807211800-000.json")
+        document.getElementById("map").style.height = "400px";
+        // windy_proxy.goto_dtg("/demo/noaa_201807211800-000.json")
     }
     else {
         // map.addLayer(windyLayer)
-        // document.getElementById("map").style.width = "1000px";
-        windy_proxy.goto_dtg("/demo/noaa_201807220000-000.json")
+        document.getElementById("map").style.height = "1000px";
+        // windy_proxy.goto_dtg("/demo/noaa_201807220000-000.json")
     }
     checked = !checked;
 }
@@ -201,6 +201,23 @@ function toggle() {
 
 
 <button onclick="toggle()">toggle</button>
-
+<br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<hr/>
 </body>
 </html>
