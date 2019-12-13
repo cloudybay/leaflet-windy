@@ -85,15 +85,15 @@ class Windy extends MDMV {
 
     setData(gridData, no_worker) {
         var self = this
-        if (gridData && gridData.header && gridData.data) {
+        if (gridData && gridData.domain && gridData.ranges) {
             if (!no_worker && self.worker) {
                 (function prepare_columns() {
                     if (self.data_lock == 0) {
                         self.data_lock = 1
                         self.gridData = gridData
                         self.worker.postMessage({
-                            header: gridData.header,
-                            data: gridData.data,
+                            domain: gridData.domain,
+                            ranges: gridData.ranges,
                             vscale: self.VELOCITY_SCALE,
                             canvasBound: self.canvasBound,
                             mapBounds: self.mapBounds

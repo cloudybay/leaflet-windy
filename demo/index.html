@@ -116,38 +116,19 @@ var windyLayer = L.windyLayer({
 map.addLayer(windyLayer);
 
 
-// WindyDataProxy.getData("wind-2.json", function(data) {
-//     windyLayer.setData(data)
-// })
+
+WindyDataProxy.fetchData("noaa_201807200600-000.json", (data) => {
+    windyLayer.setData(data)
+})
 
 
-// var windy_worker = new Worker("../src/js/windy-layer-worker.js");
-// windy_worker.data_pool = []
-// windy_worker.onmessage = function (e) {
-//     if (e.data.fetched_data) {
-//         windy_worker.data_pool.push(e.data.fetched_data)
-//         if (windy_worker.data_pool.length > 1) {
-//             windyLayer.transformData(windy_worker.data_pool)
-//         }
-//         else {
-//             windyLayer.setData(e.data.fetched_data)
-//         }
-//     }
-//     else if (e.data.interpolated_data) {
-//     }
-// }
-
-// windy_worker.postMessage({
-//     data_uri: "/dev/wind-2.json"
-// })
-
-// windy_worker.postMessage({
-//     data_uri: "/dev/wind-3.json"
-// })
 
 
 // var windy_proxy = new WindyDataProxy(windyLayer, "../windy-layer-worker.js")
-// windy_proxy.goto_dtg("/demo/cwb_201807250000-000.json")
+// windy_proxy.rangeLayerData("/demo/cwb_201807250000-000.json")
+
+
+
 
 // setTimeout(function() {
 //    windy_proxy.goto_dtg("/demo/noaa_201807250000-000.json")

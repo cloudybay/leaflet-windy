@@ -134,13 +134,28 @@ class MDMV {
      * @param φ {Float} Latitude
      * @returns {Object}
      */
-    static interpolate(header, grid, λ, φ) {
-        if(!grid) return null;
+    static interpolate(domain, grid, λ, φ) {
+        if (!grid) return null;
+        if (domain.axes.x.num <= 0) return null;
+        if (domain.axes.y.num <= 0) return null;
 
-        // calculate longitude index in wrapped range [0, 360)
-        var i = MDMV.floorMod(λ - header.lo1, 360) / header.dx;
-        // calculate latitude index in direction +90 to -90
-        var j = (header.la1 - φ) / header.dy;
+        let dx = (domain.axes.x.stop - domain.axes.x.start);
+        if (dx >= 0) {
+            dx = (dx + 1) / domain.axes.x.num;
+        }
+        else {
+            dx = (dx - 1) / domain.axes.x.num;
+        }
+        let dy = (domain.axes.y.stop - domain.axes.y.start);
+        if (dy >= 0) {
+            dy = (dy + 1) / domain.axes.y.num;
+        }
+        else {
+            dy = (dy - 1) / domain.axes.y.num;
+        }
+
+        var i = MDMV.floorMod(λ - domain.axes.x.start, 360) / dx;
+        var j = (φ - domain.axes.y.start) / dy;
 
         var fi = Math.floor(i), ci = fi + 1;
         var fj = Math.floor(j), cj = fj + 1;
@@ -161,7 +176,7 @@ class MDMV {
         return null;
     }
 
-    static interpolateField(vscale, header, grid, bounds, extent) {
+    static interpolateField(vscale, domain, grid, bounds, extent) {
         var mapArea = ((extent.south - extent.north) * (extent.west - extent.east))
         var velocityScale = vscale * Math.pow(mapArea, 0.4)
 
@@ -175,7 +190,7 @@ class MDMV {
                 if (coord) {
                     let lo = coord[0], la = coord[1]
                     if (isFinite(lo)) {
-                        let wind = MDMV.interpolate(header, grid, lo, la)
+                        let wind = MDMV.interpolate(domain, grid, lo, la)
                         if (wind) {
                             wind = MDMV.distort(lo, la, x, y, velocityScale, wind, extent)
                             column[y+1] = column[y] = wind
@@ -248,7 +263,7 @@ class MDMV {
 
         return MDMV.interpolateField(
             vscale,
-            header,
+            domain,
             grid,
             canvasBound,
             mapBounds
