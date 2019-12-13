@@ -24,8 +24,8 @@
 <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.css" />
 <script src="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.js"></script>
 
-<script src="../wind-js/mdmv-worker.js"></script>
-<script src="../wind-js/windy.js"></script>
+<script src="../mdmv-worker.js"></script>
+<script src="../windy.js"></script>
 <script src="../windy-layer-worker.js"></script>
 <script src="../L.WindCanvas.js"></script>
 <script src="../L.WindyLayer.js"></script>
@@ -105,7 +105,13 @@ var windyLayer = L.windyLayer({
         colorScale: colorScale,
         // worker_uri: "../wind-js/mdmv-worker.js",
         opacity: 0.6,
-        pane: 'shadowPane'
+        pane: 'shadowPane',
+        velocityScale: 0.02,
+        particleMultiplier: 1/100,
+        lineWidth: 1,
+        particleAge: 120,
+        frameRate: 60,
+        trailAge: 0.97
     });
 map.addLayer(windyLayer);
 
@@ -140,8 +146,8 @@ map.addLayer(windyLayer);
 // })
 
 
-var windy_proxy = new WindyDataProxy(windyLayer, "../windy-layer-worker.js")
-windy_proxy.goto_dtg("/demo/cwb_201807250000-000.json")
+// var windy_proxy = new WindyDataProxy(windyLayer, "../windy-layer-worker.js")
+// windy_proxy.goto_dtg("/demo/cwb_201807250000-000.json")
 
 // setTimeout(function() {
 //    windy_proxy.goto_dtg("/demo/noaa_201807250000-000.json")

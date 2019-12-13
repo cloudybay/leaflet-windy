@@ -1,19 +1,41 @@
 {
-  "header": {
-    "parameterUnit": "m.s-1",
-    "parameterNumber": 2,
-    "dx": 1.0,
-    "dy": 1.0,
-    "parameterNumberName": "eastward_wind",
-    "la1": 8,
-    "parameterCategory": 2,
-    "nx": 3,
-    "ny": 3,
-    "refTime": "2017-02-01 23:00:00",
-    "lo1": 120.0
+  "type" : "Coverage",
+  "domain" : {
+    "type" : "Domain",
+    "domainType" : "Grid",
+    "axes": {
+      "x" : { "start": 0, "stop": 359, "num": 360 },
+      "y" : { "start": 90, "stop": -90, "num": 180 },
+    },
+    "referencing": [{
+      "coordinates": ["x", "y"],
+      "system": {
+        "type": "GeographicCRS",
+        "id": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+      }
+    }]
   },
-  "data": [
-    [25, 35, 15, 25, 35, 15, 25, 35, 15],
-    [10, -4, -9, 10, -4, -9, 10, -4, -9]
-  ]
+  "parameters" : {
+    "type": "ParameterGroup",
+    "observedProperty": {
+      "label": {
+        "en": "Wind velocity"
+      }
+    },
+    "members": ["windU", "windV"],
+    "unit" : {
+      "label": {
+        "en": "m/s"
+      }
+    }
+  },
+  "ranges" : {
+    "windU" : {
+      "type" : "NdArray",
+      "dataType": "integer",
+      "axisNames": ["x", "y"],
+      "shape": [360, 180],
+      "values" : [ 1, 1, null, 2, 1, 2 ]
+    }
+  }
 }
