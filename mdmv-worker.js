@@ -209,13 +209,6 @@ class MDMV {
         return columns
     }
 
-    static gridPoint(ranges, p) {
-        return [
-        ]
-    }            ranges[this.options.key_of_vector_u].values[p],
-            ranges[this.options.key_of_vector_v].values[p]
-
-
     static createField(columns, bounds) {
         /**
          * @returns {Array} wind vector [u, v, magnitude] at the point (x, y), or [NaN, NaN, null] if wind

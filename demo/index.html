@@ -26,7 +26,7 @@
 
 <script src="../mdmv-worker.js"></script>
 <script src="../windy.js"></script>
-<script src="../windy-layer-worker.js"></script>
+<script src="../windy-data-worker.js"></script>
 <script src="../L.WindCanvas.js"></script>
 <script src="../L.WindyLayer.js"></script>
 
@@ -105,7 +105,7 @@ colorScale.indexFor = function(v) {
 
 var windyLayer = L.windyLayer({
         key_of_vector_u: "windU",
-        key_of_vector_v: "windV"
+        key_of_vector_v: "windV",
         colorScale: colorScale,
         opacity: 0.6,
         pane: 'shadowPane',
@@ -119,17 +119,15 @@ var windyLayer = L.windyLayer({
 map.addLayer(windyLayer);
 
 
-
-WindyDataWorker.fetchData("noaa_201807200600-000.json", (data) => {
-    windyLayer.setData(data)
-})
-
-
+/* This is Sample of fetch data directory */
+// WindyDataWorker.fetchData("coverage_201807200600-000.json", (data) => {
+//     windyLayer.setData(data)
+// })
 
 
+/* This is Sample of using worker */
 var windy_data_worker = new WindyDataWorker(windyLayer, "../windy-data-worker.js")
-windy_data_worker.rangeLayerData("/demo/cwb_201807250000-000.json")
-
+windy_data_worker.rangeLayerData("/demo/coverage_201807200600-000.json")
 
 
 
