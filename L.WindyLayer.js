@@ -9,6 +9,9 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
     _windy: null,
 
     initialize: function(options) {
+        if (!options.key_of_vector_u || !options.key_of_vector_v) {
+            console.error("Miss options key_of_vector_u and key_of_vector_v")
+        }
         L.setOptions(this, options)
     },
 
