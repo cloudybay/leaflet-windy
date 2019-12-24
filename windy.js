@@ -1,8 +1,16 @@
 
+
+const DEFAULT_KEY_OF_VECTOR_U = "windU"
+const DEFAULT_KEY_OF_VECTOR_V = "windV"
+
+
 class Windy extends MDMV {
 
     constructor(canvas, bounds, width, height, extent, options) {
         super()
+
+        this.key_of_vector_u = (options && options.key_of_vector_u) || DEFAULT_KEY_OF_VECTOR_U
+        this.key_of_vector_v = (options && options.key_of_vector_v) || DEFAULT_KEY_OF_VECTOR_V
 
         // velocity at which particle intensity is minimum (m/s)
         this.MIN_VELOCITY_INTENSITY = (options && options.minVelocity) || 0
@@ -96,7 +104,9 @@ class Windy extends MDMV {
                             ranges: gridData.ranges,
                             vscale: self.VELOCITY_SCALE,
                             canvasBound: self.canvasBound,
-                            mapBounds: self.mapBounds
+                            mapBounds: self.mapBounds,
+                            key_of_vector_u: self.key_of_vector_u,
+                            key_of_vector_v: self.key_of_vector_v
                         })
                     }
                     else {
@@ -108,7 +118,8 @@ class Windy extends MDMV {
                 self.gridData = gridData
                 let columns = Windy.buildFieldColumns(
                     gridData.domain, gridData.ranges, self.VELOCITY_SCALE,
-                    self.canvasBound, self.mapBounds
+                    self.canvasBound, self.mapBounds,
+                    self.key_of_vector_u, self.key_of_vector_v
                 )
                 let field = Windy.createField(columns, self.canvasBound)
                 if (self.field) {

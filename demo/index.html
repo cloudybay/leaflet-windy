@@ -101,9 +101,12 @@ colorScale.indexFor = function(v) {
     return 13
 };
 
+
+
 var windyLayer = L.windyLayer({
+        key_of_vector_u: "windU",
+        key_of_vector_v: "windV"
         colorScale: colorScale,
-        // worker_uri: "../wind-js/mdmv-worker.js",
         opacity: 0.6,
         pane: 'shadowPane',
         velocityScale: 0.02,
@@ -117,54 +120,54 @@ map.addLayer(windyLayer);
 
 
 
-WindyDataProxy.fetchData("noaa_201807200600-000.json", (data) => {
+WindyDataWorker.fetchData("noaa_201807200600-000.json", (data) => {
     windyLayer.setData(data)
 })
 
 
 
 
-// var windy_proxy = new WindyDataProxy(windyLayer, "../windy-layer-worker.js")
-// windy_proxy.rangeLayerData("/demo/cwb_201807250000-000.json")
+var windy_data_worker = new WindyDataWorker(windyLayer, "../windy-data-worker.js")
+windy_data_worker.rangeLayerData("/demo/cwb_201807250000-000.json")
 
 
 
 
 // setTimeout(function() {
-//    windy_proxy.goto_dtg("/demo/noaa_201807250000-000.json")
+//    windy_data_worker.goto_dtg("/demo/noaa_201807250000-000.json")
 // }, 3000);
 
 // setTimeout(function() {
-//    windy_proxy.goto_dtg("/demo/noaa_201807200000-000.json")
+//    windy_data_worker.goto_dtg("/demo/noaa_201807200000-000.json")
 // }, 600);
 
 // setTimeout(function() {
-//    windy_proxy.goto_dtg("/demo/noaa_201807200600-000.json")
+//    windy_data_worker.goto_dtg("/demo/noaa_201807200600-000.json")
 // }, 900);
 
 // setTimeout(function() {
-//    windy_proxy.goto_dtg("/demo/noaa_201807201200-000.json")
+//    windy_data_worker.goto_dtg("/demo/noaa_201807201200-000.json")
 // }, 2000);
 
 // setTimeout(function() {
-//    windy_proxy.goto_dtg("/demo/noaa_201807201800-000.json")
+//    windy_data_worker.goto_dtg("/demo/noaa_201807201800-000.json")
 // }, 5000);
 
 // setTimeout(function() {
-//    windy_proxy.goto_dtg("/demo/noaa_201807210000-000.json")
+//    windy_data_worker.goto_dtg("/demo/noaa_201807210000-000.json")
 // }, 8000);
 
 
 // setTimeout(function() {
-//    windy_proxy.transform_dtg("/demo/noaa_201807211200-000.json")
+//    windy_data_worker.transform_dtg("/demo/noaa_201807211200-000.json")
 // }, 12000);
 
 // setTimeout(function() {
-//    windy_proxy.transform_dtg("/demo/noaa_201807211800-000.json")
+//    windy_data_worker.transform_dtg("/demo/noaa_201807211800-000.json")
 // }, 15000);
 
 // setTimeout(function() {
-//    windy_proxy.transform_dtg("/demo/noaa_201807220000-000.json")
+//    windy_data_worker.transform_dtg("/demo/noaa_201807220000-000.json")
 // }, 18000);
 
 
@@ -174,12 +177,12 @@ function toggle() {
     if (checked) {
         // map.removeLayer(windyLayer)
         document.getElementById("map").style.height = "400px";
-        // windy_proxy.goto_dtg("/demo/noaa_201807211800-000.json")
+        // windy_data_worker.goto_dtg("/demo/noaa_201807211800-000.json")
     }
     else {
         // map.addLayer(windyLayer)
         document.getElementById("map").style.height = "1000px";
-        // windy_proxy.goto_dtg("/demo/noaa_201807220000-000.json")
+        // windy_data_worker.goto_dtg("/demo/noaa_201807220000-000.json")
     }
     checked = !checked;
 }

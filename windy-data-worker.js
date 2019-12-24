@@ -1,5 +1,5 @@
 
-class WindyDataProxy {
+class WindyDataWorker {
 
     constructor(wind_layer, worker_uri) {
         this.wind_layer = wind_layer
@@ -30,7 +30,7 @@ class WindyDataProxy {
                 })
             }
             else {
-                WindyDataProxy.fetchData(uri, function(data) {
+                WindyDataWorker.fetchData(uri, function(data) {
                     if (self.wind_layer) {
                         self.wind_layer.setData(data)
                     }
@@ -83,6 +83,6 @@ onmessage = function(e) {
         var callback = function(data) {
             postMessage({ fetched_data: data, uri: e.data.data_uri })
         }
-        WindyDataProxy.fetchData(e.data.data_uri, callback)
+        WindyDataWorker.fetchData(e.data.data_uri, callback)
     }
 }

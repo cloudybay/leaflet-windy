@@ -210,8 +210,11 @@ class MDMV {
     }
 
     static gridPoint(ranges, p) {
-        return [ranges.windU.values[p], ranges.windV.values[p]]
-    }
+        return [
+        ]
+    }            ranges[this.options.key_of_vector_u].values[p],
+            ranges[this.options.key_of_vector_v].values[p]
+
 
     static createField(columns, bounds) {
         /**
@@ -244,7 +247,8 @@ class MDMV {
         return field
     }
 
-    static buildFieldColumns(domain, ranges, vscale, canvasBound, mapBounds) {
+    static buildFieldColumns(domain, ranges, vscale, canvasBound, mapBounds,
+            key_of_vector_u, key_of_vector_v) {
         let grid = [], p = 0
         let nx = domain.axes.x.num
         let ny = domain.axes.y.num
@@ -253,7 +257,10 @@ class MDMV {
         for (let j = 0; j < ny; j++) {
             let row = []
             for (let i = 0; i < nx; i++, p++) {
-                row[i] = MDMV.gridPoint(ranges, p)
+                row[i] = [
+                    ranges[key_of_vector_u].values[p],
+                    ranges[key_of_vector_v].values[p]
+                ]
             }
             if (isContinuous) {
                 row.push(row[0])
@@ -275,7 +282,8 @@ class MDMV {
 onmessage = function(e) {
     let columns = MDMV.buildFieldColumns(
         e.data.domain, e.data.ranges, e.data.vscale,
-        e.data.canvasBound, e.data.mapBounds
+        e.data.canvasBound, e.data.mapBounds,
+        key_of_vector_u, key_of_vector_v
     )
     postMessage({ columns: columns })
 }
