@@ -65,13 +65,15 @@ class Windy extends MDMV {
             self.worker = new Worker(options.worker_uri);
             self.worker.onmessage = function (e) {
                 self.data_lock = 0;
-                let columns = e.data.columns;
-                let field = Windy.createField(columns, self.canvasBound);
                 if (self.field) {
                     self.field.release();
                     self.field = null;
                 }
-                self.field = field;
+                let columns = e.data.columns;
+                if (columns) {
+                    let field = Windy.createField(columns, self.canvasBound);
+                    self.field = field;
+                }
             }
         }
     }
@@ -93,40 +95,60 @@ class Windy extends MDMV {
 
     setData(gridData, no_worker) {
         var self = this
-        if (gridData && gridData.domain && gridData.ranges) {
-            if (!no_worker && self.worker) {
-                (function prepare_columns() {
-                    if (self.data_lock == 0) {
-                        self.data_lock = 1
-                        self.gridData = gridData
-                        self.worker.postMessage({
-                            domain: gridData.domain,
-                            ranges: gridData.ranges,
-                            vscale: self.VELOCITY_SCALE,
-                            canvasBound: self.canvasBound,
-                            mapBounds: self.mapBounds,
-                            key_of_vector_u: self.key_of_vector_u,
-                            key_of_vector_v: self.key_of_vector_v
-                        })
+        if (gridData) {
+            let ranges = gridData.ranges
+            let domain = gridData.domain
+            if (gridData.coverages) {
+                for (let coverage of gridData.coverages) {
+                    if (coverage.ranges &&
+                            coverage.ranges[self.key_of_vector_u] &&
+                            coverage.ranges[self.key_of_vector_v]) {
+                        ranges = coverage.ranges
+                        domain = coverage.domain
+                        break
                     }
-                    else {
-                        self._timer_prepare_columns = setTimeout(prepare_columns, 100)
-                    }
-                })();
-            }
-            else {
-                self.gridData = gridData
-                let columns = Windy.buildFieldColumns(
-                    gridData.domain, gridData.ranges, self.VELOCITY_SCALE,
-                    self.canvasBound, self.mapBounds,
-                    self.key_of_vector_u, self.key_of_vector_v
-                )
-                let field = Windy.createField(columns, self.canvasBound)
-                if (self.field) {
-                    self.field.release();
-                    self.field = null;
                 }
-                self.field = field
+            }
+            if (ranges) {
+                if (!no_worker && self.worker) {
+                    (function prepare_columns() {
+                        if (self.data_lock == 0) {
+                            self.data_lock = 1
+                            self.gridData = gridData
+                            self.worker.postMessage({
+                                domain: domain,
+                                ranges: ranges,
+                                vscale: self.VELOCITY_SCALE,
+                                canvasBound: self.canvasBound,
+                                mapBounds: self.mapBounds,
+                                key_of_vector_u: self.key_of_vector_u,
+                                key_of_vector_v: self.key_of_vector_v
+                            })
+                        }
+                        else {
+                            self._timer_prepare_columns = setTimeout(prepare_columns, 100)
+                        }
+                    })();
+                }
+                else {
+                    self.gridData = gridData
+
+                    let columns = Windy.buildFieldColumns(
+                        domain, ranges, self.VELOCITY_SCALE,
+                        self.canvasBound, self.mapBounds,
+                        self.key_of_vector_u, self.key_of_vector_v
+                    )
+
+                    if (self.field) {
+                        self.field.release();
+                        self.field = null;
+                    }
+
+                    if (columns) {
+                        let field = Windy.createField(columns, self.canvasBound)
+                        self.field = field
+                    }
+                }
             }
         }
         else {

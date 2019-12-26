@@ -243,13 +243,92 @@ class MDMV {
     static buildFieldColumns(domain, ranges, vscale, canvasBound, mapBounds,
             key_of_vector_u, key_of_vector_v) {
         let grid = [], p = 0
-        let nx = domain.axes.x.num
-        let ny = domain.axes.y.num
+        let nx = 0
+        let ny = 0
+
+        function _check_axes_shape(axis_names, axis_shape) {
+            if (!axis_names || !axis_shape) {
+                console.error("Not valied axes")
+                return null;
+            }
+            if (axis_names.length != axis_shape.length) {
+                console.error("axes names and shapes not compatible")
+                return null;
+            }
+            let axes_x_idx = 0
+            let axes_y_idx = 0
+            for (let idx=0; idx<axis_names.length; idx++) {
+                let axes_name = axis_names[idx]
+                let shape = axis_shape[idx]
+                if (axes_name == "x") {
+                    axes_x_idx = idx
+                    if (nx > 0 && nx != shape) {
+                        console.error("shape of x not compatible")
+                        return null
+                    }
+                    nx = shape
+                }
+                else if (axes_name == "y") {
+                    axes_y_idx = idx
+                    if (ny > 0 && ny != shape) {
+                        console.error("shape of x not compatible")
+                        return null
+                    }
+                    ny = shape
+                }
+                else if (axes_name == "t") {
+                    if (shape != 1) {
+                        console.error("shape of dtime should be only one")
+                        return null
+                    }
+                }
+                else if (axes_name == "z") {
+                    if (shape != 1) {
+                        console.error("shape of altitude should be only one")
+                        return null
+                    }
+                }
+            }
+            return {
+                x: axes_x_idx,
+                y: axes_y_idx
+            }
+        }
+
+        let axes_idx_u = _check_axes_shape(
+            ranges[key_of_vector_u].axisNames,
+            ranges[key_of_vector_u].shape
+        )
+        if (!axes_idx_u) {
+            return null
+        }
+        let axes_idx_v = _check_axes_shape(
+            ranges[key_of_vector_v].axisNames,
+            ranges[key_of_vector_v].shape
+        )
+        if (!axes_idx_v) {
+            return null
+        }
+
+        if (axes_idx_u.x !== axes_idx_v.x && axes_idx_u.y !== axes_idx_v.y) {
+            // 太麻煩了, 不想用了...
+            console.error("拜託 axes 用一樣的順序好嗎...")
+            return null
+        }
+
         let dx = (domain.axes.x.stop - domain.axes.x.start + 1) / nx
         let isContinuous = Math.floor(nx * dx) >= 360
-        for (let j = 0; j < ny; j++) {
+
+        let loop1 = ny
+        let loop2 = nx
+        if (axes_idx_u.x > axes_idx_u.y) {
+            loop1 = nx
+            loop2 = ny
+        }
+
+        for (let j = 0; j < loop1; j++) {
             let row = []
-            for (let i = 0; i < nx; i++, p++) {
+            for (let i = 0; i < loop2; i++, p++) {
                 row[i] = [
                     ranges[key_of_vector_u].values[p],
                     ranges[key_of_vector_v].values[p]
