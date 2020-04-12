@@ -26,7 +26,6 @@
 
 <script src="../mdmv-worker.js"></script>
 <script src="../windy.js"></script>
-<script src="../windy-data-worker.js"></script>
 <script src="../L.WindCanvas.js"></script>
 <script src="../L.WindyLayer.js"></script>
 
@@ -103,9 +102,32 @@ colorScale.indexFor = function(v) {
 
 
 
+function fetchData(uri, callback) {
+    fetch(uri, {method: 'get'})
+        .then(response => {
+            if (response.ok) {
+                return Promise.resolve(response.json());
+            }
+            else {
+                return Promise.reject(new Error('Failed to load'));
+            }
+        })
+        .then(data => {
+            callback(data);
+        })
+        .catch(error => {
+            callback({});
+            console.log(`Error: ${error.message}`);
+        })
+}
+
+
+
 var windyLayer = L.windyLayer({
-        key_of_vector_u: "windU",
-        key_of_vector_v: "windV",
+        key_of_vector_u: "10 metre U wind component",
+        // key_of_vector_u: "U component of wind",
+        key_of_vector_v: "10 metre V wind component",
+        // key_of_vector_v: "V component of wind",
         colorScale: colorScale,
         opacity: 0.6,
         pane: 'shadowPane',
@@ -119,16 +141,12 @@ var windyLayer = L.windyLayer({
 map.addLayer(windyLayer);
 
 
-/* This is Sample of fetch data directory */
-// WindyDataWorker.fetchData("coverage_201807200600-000.json", (data) => {
-//     windyLayer.setData(data)
-// })
-
-
-/* This is Sample of using worker */
-var windy_data_worker = new WindyDataWorker(windyLayer, "../windy-data-worker.js")
-windy_data_worker.rangeLayerData("/demo/coverage_201807200600-000.json")
-
+let uri = "/demo/cwb_wfr.covjson"
+// let uri = "/demo/noaa_gfs.covjson"
+fetchData(
+    uri,
+    data => { windyLayer.setData(data) }
+)
 
 
 // setTimeout(function() {
