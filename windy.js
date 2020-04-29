@@ -1,5 +1,4 @@
 
-
 const DEFAULT_KEY_OF_VECTOR_U = "windU"
 const DEFAULT_KEY_OF_VECTOR_V = "windV"
 

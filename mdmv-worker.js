@@ -352,10 +352,23 @@ class MDMV {
 
 
 onmessage = function(e) {
-    let columns = MDMV.buildFieldColumns(
-        e.data.domain, e.data.ranges, e.data.vscale,
-        e.data.canvasBound, e.data.mapBounds,
-        key_of_vector_u, key_of_vector_v
-    )
-    postMessage({ columns: columns })
+    try {
+        if (e.data &&
+            e.data.hasOwnProperty('domain') &&
+            e.data.hasOwnProperty('ranges') &&
+            e.data.hasOwnProperty('vscale') &&
+            e.data.hasOwnProperty('canvasBound') &&
+            e.data.hasOwnProperty('mapBounds') &&
+            e.data.hasOwnProperty('key_of_vector_u') &&
+            e.data.hasOwnProperty('key_of_vector_v')) {
+            let columns = MDMV.buildFieldColumns(
+                e.data.domain, e.data.ranges, e.data.vscale,
+                e.data.canvasBound, e.data.mapBounds,
+                e.data.key_of_vector_u, e.data.key_of_vector_v
+            )
+            postMessage({ columns: columns })
+        }
+    } catch(e) {
+        console.error("An error occurred here.", e)
+    }
 }

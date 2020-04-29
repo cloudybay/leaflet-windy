@@ -167,7 +167,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             L.Util.cancelAnimFrame(this._frame);
         }
 
-        map.getPanes().overlayPane.removeChild(this._canvas);
+        // map.getPanes().overlayPane.removeChild(this._canvas);
 
         map.off(this.getEvents(),this);
 
