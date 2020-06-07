@@ -8,47 +8,7 @@ class Windy extends MDMV {
     constructor(canvas, bounds, width, height, extent, options) {
         super()
 
-        this.key_of_vector_u = (options && options.key_of_vector_u) || DEFAULT_KEY_OF_VECTOR_U
-        this.key_of_vector_v = (options && options.key_of_vector_v) || DEFAULT_KEY_OF_VECTOR_V
-
-        // velocity at which particle intensity is minimum (m/s)
-        this.MIN_VELOCITY_INTENSITY = (options && options.minVelocity) || 0
-        // velocity at which particle intensity is maximum (m/s)
-        this.MAX_VELOCITY_INTENSITY = (options && options.maxVelocity) || 10
-        // scale for wind velocity (completely arbitrary--this value looks nice)
-        this.VELOCITY_SCALE = ((options && options.velocityScale) || 0.015) * (Math.pow(window.devicePixelRatio,1/3) || 1)
-        // max number of frames a particle is drawn before regeneration
-        this.MAX_PARTICLE_AGE = (options && options.particleAge) || 120
-        // line width of a drawn particle
-        this.PARTICLE_LINE_WIDTH = (options && options.lineWidth) || 1
-        // particle count scalar (completely arbitrary--this values looks nice)
-        this.PARTICLE_MULTIPLIER = (options && options.particleMultiplier) || 1 / 200
-        // desired frames per second
-        this.FRAME_RATE = (options && options.frameRate) || 16
-        this.FRAME_TIME = 1000 / this.FRAME_RATE
-        this.TRAIL_AGE = (options && options.trailAge) || 0.9;
-
-        // multiply particle count for mobiles by this amount
-        this.PARTICLE_REDUCTION = (Math.pow(window.devicePixelRatio,1/3) || 1.6)
-
-        this.colorScale = (options && options.colorScale) || [
-            "rgb(36,104,180)",
-            "rgb(60,157,194)",
-            "rgb(128,205,193)",
-            "rgb(151,218,168)",
-            "rgb(198,231,181)",
-            "rgb(238,247,217)",
-            "rgb(255,238,159)",
-            "rgb(252,217,125)",
-            "rgb(255,182,100)",
-            "rgb(252,150,75)",
-            "rgb(250,112,52)",
-            "rgb(245,64,32)",
-            "rgb(237,45,28)",
-            "rgb(220,24,32)",
-            "rgb(180,0,35)"
-        ]
-
+        this.setOptions(options);
         this.setCanvas(canvas, bounds, width, height, extent);
 
         // -1: stop, 0: waiting field ready, 1: running
@@ -75,6 +35,49 @@ class Windy extends MDMV {
                 }
             }
         }
+    }
+
+    setOptions(options) {
+        this.key_of_vector_u = (options && options.key_of_vector_u) || DEFAULT_KEY_OF_VECTOR_U
+        this.key_of_vector_v = (options && options.key_of_vector_v) || DEFAULT_KEY_OF_VECTOR_V
+
+        // velocity at which particle intensity is minimum (m/s)
+        this.MIN_VELOCITY_INTENSITY = (options && options.minVelocity) || 0
+        // velocity at which particle intensity is maximum (m/s)
+        this.MAX_VELOCITY_INTENSITY = (options && options.maxVelocity) || 10
+        // scale for wind velocity (completely arbitrary--this value looks nice)
+        this.velocity_scale = ((options && options.velocityScale) || 0.002) * (Math.pow(window.devicePixelRatio,1/3) || 1)
+        // max number of frames a particle is drawn before regeneration
+        this.MAX_PARTICLE_AGE = (options && options.particleAge) || 120
+        // line width of a drawn particle
+        this.PARTICLE_LINE_WIDTH = (options && options.lineWidth) || 1
+        // particle count scalar (completely arbitrary--this values looks nice)
+        this.PARTICLE_MULTIPLIER = (options && options.particleMultiplier) || 1 / 200
+        // desired frames per second
+        this.FRAME_RATE = (options && options.frameRate) || 60
+        this.FRAME_TIME = 1000 / this.FRAME_RATE
+        this.TRAIL_AGE = (options && options.trailAge) || 0.97;
+
+        // multiply particle count for mobiles by this amount
+        this.PARTICLE_REDUCTION = (Math.pow(window.devicePixelRatio,1/3) || 1.6)
+
+        this.colorScale = (options && options.colorScale) || [
+            "rgb(36,104,180)",
+            "rgb(60,157,194)",
+            "rgb(128,205,193)",
+            "rgb(151,218,168)",
+            "rgb(198,231,181)",
+            "rgb(238,247,217)",
+            "rgb(255,238,159)",
+            "rgb(252,217,125)",
+            "rgb(255,182,100)",
+            "rgb(252,150,75)",
+            "rgb(250,112,52)",
+            "rgb(245,64,32)",
+            "rgb(237,45,28)",
+            "rgb(220,24,32)",
+            "rgb(180,0,35)"
+        ]
     }
 
     setCanvas(canvas, bounds, width, height, extent) {
@@ -117,7 +120,7 @@ class Windy extends MDMV {
                             self.worker.postMessage({
                                 domain: domain,
                                 ranges: ranges,
-                                vscale: self.VELOCITY_SCALE,
+                                vscale: self.velocity_scale,
                                 canvasBound: self.canvasBound,
                                 mapBounds: self.mapBounds,
                                 key_of_vector_u: self.key_of_vector_u,
@@ -133,7 +136,7 @@ class Windy extends MDMV {
                     self.gridData = gridData
 
                     let columns = Windy.buildFieldColumns(
-                        domain, ranges, self.VELOCITY_SCALE,
+                        domain, ranges, self.velocity_scale,
                         self.canvasBound, self.mapBounds,
                         self.key_of_vector_u, self.key_of_vector_v
                     )

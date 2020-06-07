@@ -29,6 +29,9 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
         if (typeof this.options.className !== 'undefined') {
             options.className = this.options.className;
         }
+        if (typeof this.options.canvas_scale !== 'undefined') {
+            options.canvas_scale = this.options.canvas_scale;
+        }
         this._canvasLayer = L.windCanvas(options).delegate(this)
         this._canvasLayer.addTo(map)
         this._map = map
@@ -92,15 +95,69 @@ L.WindyLayer = (L.Layer ? L.Layer : L.Class).extend({
     },
 
     onDrawLayer: function(params) {
+        let options = Object.assign({}, this.options)
+        let zoom = this._map.getZoom()
+        if (zoom == 16) {
+            options.velocityScale = 0.0015
+            options.trailAge = 0.96
+            options.particleAge = 120
+        }
+        else if (zoom == 17) {
+            options.velocityScale = 0.001
+            options.trailAge = 0.97
+            options.particleAge = 105
+        }
+        else if (zoom == 18) {
+            options.velocityScale = 0.00075
+            options.trailAge = 0.98
+            options.particleAge = 90
+        }
+        else if (zoom == 19) {
+            options.velocityScale = 0.0005
+            options.trailAge = 0.98
+            options.particleAge = 90
+        }
+        else if (zoom == 20) {
+            options.velocityScale = 0.001
+            options.trailAge = 0.97
+            options.particleAge = 90
+            options.particleMultiplier = this.options.particleMultiplier * 0.8
+        }
+        else if (zoom == 21) {
+            options.velocityScale = 0.002
+            options.trailAge = 0.96
+            options.particleAge = 60
+            options.particleMultiplier = this.options.particleMultiplier * 0.6
+        }
+        else if (zoom == 22) {
+            options.velocityScale = 0.004
+            options.trailAge = 0.95
+            options.particleAge = 30
+            options.particleMultiplier = this.options.particleMultiplier * 0.4
+        }
+        else if (zoom == 23) {
+            options.velocityScale = 0.008
+            options.trailAge = 0.95
+            options.particleAge = 20
+            options.particleMultiplier = this.options.particleMultiplier * 0.2
+        }
+        else if (zoom == 24) {
+            options.velocityScale = 0.016
+            options.trailAge = 0.94
+            options.particleAge = 15
+            options.particleMultiplier = this.options.particleMultiplier * 0.1
+        }
+
         let [bounds, width, height, extent] = this._buildParams(params.size, params.bounds);
         if (!this._windy) {
             this._windy = new Windy(
                 params.canvas,
                 bounds, width, height, extent,
-                this.options
+                options
             );
         }
         else {
+            this._windy.setOptions(options)
             this._windy.setCanvas(params.canvas, bounds, width, height, extent);
         }
 

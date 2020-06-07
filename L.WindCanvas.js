@@ -1,11 +1,3 @@
-
-/*
-  Extent from  Canvas Layer by Stanislav Sumbera,  2016-2018, sumbera.com
-  Specific for windy
-*/
-
-// -- L.DomUtil.setTransform from leaflet 1.0.0 to work on 0.0.7
-//------------------------------------------------------------------------------
 L.DomUtil.setTransform = L.DomUtil.setTransform || function (el, offset, scale) {
     var pos = offset || new L.Point(0, 0);
 
@@ -16,15 +8,15 @@ L.DomUtil.setTransform = L.DomUtil.setTransform || function (el, offset, scale) 
         (scale ? ' scale(' + scale + ')' : '');
 };
 
-// -- support for both  0.0.7 and 1.0.0 rc2 leaflet
+
 L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
 
     options: {
         opacity: 1,
+        canvas_scale: 1,
         pane: 'overlayPane'
     },
 
-    // -- initialized is called on prototype
     initialize: function (options) {
         this._map    = null;
         this._canvas = null;
@@ -50,7 +42,6 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._canvas2.getContext('2d').clearRect(0, 0, 3000, 3000);
     },
 
-    //-------------------------------------------------------------
     _onLayerDidResize: function (resizeEvent) {
         if (resizeEvent) {
             var go_hide_canvas = null
@@ -66,16 +57,21 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
                 this._canvas2.style.opacity = this.options.opacity;
                 go_hide_canvas = this._canvas1;
             }
-            this._canvas1.width = resizeEvent.newSize.x;
-            this._canvas1.height = resizeEvent.newSize.y;
-            this._canvas2.width = resizeEvent.newSize.x;
-            this._canvas2.height = resizeEvent.newSize.y;
+
+            this._canvas1.width = resizeEvent.newSize.x * this.options.canvas_scale;
+            this._canvas1.height = resizeEvent.newSize.y * this.options.canvas_scale;
+            this._canvas2.width = resizeEvent.newSize.x * this.options.canvas_scale;
+            this._canvas2.height = resizeEvent.newSize.y * this.options.canvas_scale;
+            this._canvas1.style.width = resizeEvent.newSize.x + "px";
+            this._canvas1.style.height = resizeEvent.newSize.y + "px";
+            this._canvas2.style.width = resizeEvent.newSize.x + "px";
+            this._canvas2.style.height = resizeEvent.newSize.y + "px";
 
             L.DomUtil.addClass(go_hide_canvas, "leaflet-layer-fade");
             go_hide_canvas.style.opacity = 0;
         }
     },
-    //-------------------------------------------------------------
+
     _onLayerDidMove: function () {
         var go_hide_canvas = null;
         if (this._canvas == this._canvas2) {
@@ -99,10 +95,10 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         L.DomUtil.addClass(go_hide_canvas, "leaflet-layer-fade");
         go_hide_canvas.style.opacity = 0;
     },
+
     _onLayerDidZoom: function() {
-        //pass
     },
-    //-------------------------------------------------------------
+
     getEvents: function () {
         var events = {
             resize: this._onLayerDidResize,
@@ -115,7 +111,7 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
 
         return events;
     },
-    //-------------------------------------------------------------
+
     onAdd: function (map) {
         this._map = map;
         this._canvas1 = L.DomUtil.create('canvas', 'leaflet-layer');
@@ -135,10 +131,14 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._canvas = this._canvas1;
 
         var size = this._map.getSize();
-        this._canvas1.width = size.x;
-        this._canvas1.height = size.y;
-        this._canvas2.width = size.x;
-        this._canvas2.height = size.y;
+        this._canvas1.width = size.x * this.options.canvas_scale;
+        this._canvas1.height = size.y * this.options.canvas_scale;
+        this._canvas2.width = size.x * this.options.canvas_scale;
+        this._canvas2.height = size.y * this.options.canvas_scale;
+        this._canvas1.style.width = size.x + "px";
+        this._canvas1.style.height = size.y + "px";
+        this._canvas2.style.width = size.x + "px";
+        this._canvas2.style.height = size.y + "px";
 
         var animated = this._map.options.zoomAnimation && L.Browser.any3d;
         L.DomUtil.addClass(this._canvas1, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
@@ -154,14 +154,13 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         map.on(this.getEvents(),this);
 
         var del = this._delegate || this;
-        del.onLayerDidMount && del.onLayerDidMount(); // -- callback
+        del.onLayerDidMount && del.onLayerDidMount();
         this.needRedraw();
     },
 
-    //-------------------------------------------------------------
     onRemove: function (map) {
         var del = this._delegate || this;
-        del.onLayerWillUnmount && del.onLayerWillUnmount(); // -- callback
+        del.onLayerWillUnmount && del.onLayerWillUnmount();
 
         if (this._frame) {
             L.Util.cancelAnimFrame(this._frame);
@@ -174,12 +173,11 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         this._canvas = null;
     },
 
-    //------------------------------------------------------------
     addTo: function (map) {
         map.addLayer(this);
         return this;
     },
-    // --------------------------------------------------------------------------------
+
     LatLonToMercator: function (latlon) {
         return {
             x: latlon.lng * 6378137 * Math.PI / 180,
@@ -187,12 +185,13 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         };
     },
 
-    //------------------------------------------------------------------------------
     drawLayer: function (no_worker) {
-        // -- todo make the viewInfo properties  flat objects.
-        var size   = this._map.getSize();
         var bounds = this._map.getBounds();
         var zoom   = this._map.getZoom();
+
+        var size   = this._map.getSize();
+        size.x = size.x * this.options.canvas_scale;
+        size.y = size.y * this.options.canvas_scale;
 
         var center = this.LatLonToMercator(this._map.getCenter());
         var corner = this.LatLonToMercator(this._map.containerPointToLatLng(this._map.getSize()));
@@ -210,11 +209,9 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
         });
         this._frame = null;
     },
-    // -- L.DomUtil.setTransform from leaflet 1.0.0 to work on 0.0.7
-    //------------------------------------------------------------------------------
+
     _setTransform: function (el, offset, scale) {
         var pos = offset || new L.Point(0, 0);
-
         el.style[L.DomUtil.TRANSFORM] =
             (L.Browser.ie3d ?
                 'translate(' + pos.x + 'px,' + pos.y + 'px)' :
@@ -222,13 +219,10 @@ L.WindCanvas = (L.Layer ? L.Layer : L.Class).extend({
             (scale ? ' scale(' + scale + ')' : '');
     },
 
-    //------------------------------------------------------------------------------
     _animateZoom: function (e) {
         var scale = this._map.getZoomScale(e.zoom);
-        // -- different calc of animation zoom  in leaflet 1.0.3 thanks @peterkarabinovic, @jduggan1
         var offset = L.Layer ? this._map._latLngBoundsToNewLayerBounds(this._map.getBounds(), e.zoom, e.center).min :
                                this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos());
-
         L.DomUtil.setTransform(this._canvas, offset, scale);
     }
 });
