@@ -4,8 +4,8 @@
     "type": "Domain",
     "domainType": "Grid",
     "axes": {
-      "x": {"start": 120, "stop": 122, "num": 3},
-      "y": {"start": 8, "stop": 11, "num": 3}
+      "x": {"start": 121.4, "stop": 121.6, "num": 3},
+      "y": {"start": 24.8, "stop": 25, "num": 3}
     },
     "referencing": [{
       "coordinates": ["x", "y"],
@@ -35,14 +35,14 @@
       "dataType": "integer",
       "axisNames": ["x", "y"],
       "shape": [3, 3],
-      "values" : [25, 35, 15, 25, 35, 15, 25, 35, 15]
+      "values" : [6, 6, 6, 6, 6, 6, 6, 6, 6]
     },
     "windV" : {
       "type" : "NdArray",
       "dataType": "integer",
       "axisNames": ["x", "y"],
       "shape": [3, 3],
-      "values" : [10, -4, -9, 10, -4, -9, 10, -4, -9]
+      "values" : [0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
   }
 }

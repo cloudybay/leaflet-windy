@@ -32,9 +32,19 @@
 <script>
 var map = L.map('map', {
 });
-map.setView([17.5, 120.5], 4);
 
-L.tileLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}").addTo(map);
+L.tileLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+{
+    maxZoom: 24
+}).addTo(map);
+
+map.setView([24.9921009, 121.5414863], 15);
+
+L.control.scale({
+        imperial: false,
+        position: 'bottomright'
+      }).addTo(map);
+
 
 var colorScale = [
     "rgb(255, 255, 255)",
@@ -124,25 +134,26 @@ function fetchData(uri, callback) {
 
 
 var windyLayer = L.windyLayer({
-        key_of_vector_u: "10 metre U wind component",
+        // key_of_vector_u: "10 metre U wind component",
+        key_of_vector_u: "windU",
+        key_of_vector_v: "windV",
         // key_of_vector_u: "U component of wind",
-        key_of_vector_v: "10 metre V wind component",
+        // key_of_vector_v: "10 metre V wind component",
         // key_of_vector_v: "V component of wind",
         colorScale: colorScale,
-        opacity: 0.6,
+        opacity: 0.9,
         pane: 'shadowPane',
-        velocityScale: 0.02,
-        particleMultiplier: 1/100,
+        particleMultiplier: 1/600,
         lineWidth: 1,
-        particleAge: 120,
-        frameRate: 60,
-        trailAge: 0.97
+        particleAge: 60,
+        canvas_scale: 1
     });
 map.addLayer(windyLayer);
 
 
-let uri = "/demo/cwb_wfr.covjson"
+// let uri = "/demo/cwb_wrf_2020041100_06.json"
 // let uri = "/demo/noaa_gfs.covjson"
+let uri = "/demo/coverage.json"
 fetchData(
     uri,
     data => { windyLayer.setData(data) }
