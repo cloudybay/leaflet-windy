@@ -139,20 +139,8 @@ class MDMV {
         if (domain.axes.x.num <= 0) return null;
         if (domain.axes.y.num <= 0) return null;
 
-        let dx = (domain.axes.x.stop - domain.axes.x.start);
-        if (dx >= 0) {
-            dx = (dx + 1) / domain.axes.x.num;
-        }
-        else {
-            dx = (dx - 1) / domain.axes.x.num;
-        }
-        let dy = (domain.axes.y.stop - domain.axes.y.start);
-        if (dy >= 0) {
-            dy = (dy + 1) / domain.axes.y.num;
-        }
-        else {
-            dy = (dy - 1) / domain.axes.y.num;
-        }
+        let dx = (domain.axes.x.stop - domain.axes.x.start) / domain.axes.x.num;
+        let dy = (domain.axes.y.stop - domain.axes.y.start) / domain.axes.y.num;
 
         var i = MDMV.floorMod(λ - domain.axes.x.start, 360) / dx;
         var j = (φ - domain.axes.y.start) / dy;
