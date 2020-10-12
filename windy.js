@@ -2,6 +2,7 @@
 const DEFAULT_KEY_OF_VECTOR_U = "windU"
 const DEFAULT_KEY_OF_VECTOR_V = "windV"
 
+import { MDMV } from './mdmv-worker.js'
 
 class Windy extends MDMV {
 
@@ -341,4 +342,8 @@ class Windy extends MDMV {
         return this;
     }
 
+}
+
+export {
+    Windy
 }

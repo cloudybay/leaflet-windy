@@ -360,3 +360,7 @@ onmessage = function(e) {
         console.error("An error occurred here.", e)
     }
 }
+
+export {
+    MDMV
+}

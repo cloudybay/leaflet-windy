@@ -24,12 +24,10 @@
 <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.css" />
 <script src="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.js"></script>
 
-<script src="../mdmv-worker.js"></script>
-<script src="../windy.js"></script>
-<script src="../L.WindCanvas.js"></script>
-<script src="../L.WindyLayer.js"></script>
+<script type="module">
+import '../L.WindCanvas.js'
+import '../L.WindyLayer.js'
 
-<script>
 var map = L.map('map', {
 });
 
@@ -38,7 +36,7 @@ L.tileLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/M
     maxZoom: 24
 }).addTo(map);
 
-map.setView([24.9921009, 121.5414863], 15);
+map.setView([24.8, 121.4], 15);
 
 L.control.scale({
         imperial: false,
@@ -198,6 +196,10 @@ fetchData(
 // }, 18000);
 
 
+
+</script>
+
+<script>
 var checked = true;
 function toggle() {
     console.log("checked", checked);
@@ -213,9 +215,7 @@ function toggle() {
     }
     checked = !checked;
 }
-
 </script>
-
 
 <button onclick="toggle()">toggle</button>
 <br/>
